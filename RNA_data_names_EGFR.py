@@ -3,7 +3,9 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 
-
+"""
+To kod, ktory wyciaga 5 genow ref z okreslonych chromosomow, usunalbym to bo i tak mam kod, ktory wyciaga te wszystkie z hrt atlas
+"""
 gse = GEOparse.get_GEO(filepath="./GSE72217_family.soft.gz")
 
 print ()
