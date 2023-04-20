@@ -8,7 +8,7 @@ import numpy as np
 files_folder_dir = "C:/Users/micle/Desktop/Python/dyplom/Practice/"
 
 
-
+#unpacking data file
 gse72217 = GEOparse.get_GEO(filepath="./GSE72217_family.soft.gz")
 samples = list(gse72217.gsms.keys())
 samples_expression = gse72217.pivot_samples('VALUE')[samples]
@@ -19,10 +19,12 @@ annotation = annotation[annotation['ID_REF'].isin(gene_ids)]
 data = pd.concat([annotation, samples_expression], axis=1)
 data.to_csv('C:/Users/micle/Desktop/Python/dyplom/GSE72217_expression_data.csv')
 
-data = pd.read_csv("C:/Users/micle/Desktop/Python/dyplom/Practice/GSE72217_expression_data.csv", low_memory=False)
+#data = pd.read_csv("C:/Users/micle/Desktop/Python/dyplom/Practice/GSE72217_expression_data.csv", low_memory=False)
 
+#removing control samples
 main_data = data.loc[data['category'] == 'main']
 
+#creting a new column with feasible gene names
 gene_names = []
 
 for gene_name in main_data['gene_assignment']:
@@ -39,6 +41,7 @@ main_data['gene_name'] = main_data['gene_name'].str.strip()
 
 #clean_data = main_data.drop(main_data.columns[range(1, 13)], axis = 1)
 
+#cleaning and preparing the data file
 clean_data = main_data.drop(main_data.columns[range(2,13)], axis = 1)
 clean_data = clean_data.drop(clean_data.columns[[0]], axis = 1)
 clean_data = clean_data.set_index("ID_REF")
@@ -46,7 +49,7 @@ clean_data.index = clean_data.index.map(str)
 clean_data = clean_data.T
 
 
-
+#correlation tests (simple version)
 correlation_data = pd.DataFrame()
 correlation_data['gene_name'] = main_data['gene_name']
 
@@ -58,6 +61,7 @@ kendall = []
 
 egfr = clean_data['3002640']
 TTLL10 = clean_data['2315554']
+
 
 for gene_name in clean_data:
     a = clean_data[gene_name]
@@ -160,6 +164,8 @@ ax.set_ylabel('EGFR gene expression')
 ax.legend(facecolor='white')
 plt.show()
 
+
+#correlation with p-value
 correlation_data_improved = pd.DataFrame()
 correlation_data_improved['gene_name'] = main_data['gene_name']
 correlation_data_improved['ID_REF'] = main_data['ID_REF']
