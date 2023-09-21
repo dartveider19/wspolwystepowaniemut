@@ -186,8 +186,7 @@ def correlation (gene_name):
         spearman_p_value.append(scipy.stats.spearmanr(i, gene)[1])
         kendall_improved.append(scipy.stats.kendalltau(i, gene)[0])
         kendall_p_value.append(scipy.stats.kendalltau(i, gene)[1])
-        print(a)
-        print(rho, cor, tau)
+
     correlation_data = pd.DataFrame()
     correlation_data['ID_REF'] = data_expr_lvl['ID_REF']
     correlation_data['Pearson r'] = pearson_improved
@@ -204,3 +203,44 @@ def correlation (gene_name):
 
     return correlation_data
 
+def only_significant_corr(corr_data):
+    global only_significant_correlation
+
+    only_significant_correlation = corr_data.loc[corr_data['Pearson p-value'] <= 0.05]
+    only_significant_correlation = only_significant_correlation.loc[only_significant_correlation['Spearman p-value'] <= 0.05]
+    only_significant_correlation = only_significant_correlation.loc[only_significant_correlation['Kendall p-value'] <= 0.05]
+
+def determine_correlation(corr):
+    if corr > -0.3 and corr < 0.3:
+        return 'negligible correlation'
+    elif corr >= 0.3 and corr < 0.5:
+        return 'low positive correlation'
+    elif corr >= 0.5 and corr < 0.7:
+        return 'moderate positive correlation'
+    elif corr >= 0.7 and corr < 0.9:
+        return 'high positive correlation'
+    elif corr >= 0.9:
+        return 'very high positive correlation'
+    elif corr <= -0.3 and corr > -0.5:
+        return 'low negative correlation'
+    elif corr <= -0.5 and corr > -0.7:
+        return 'moderate positive correlation'
+    elif corr <= -0.7 and corr > -0.9:
+        return 'high negative correlation'
+    elif corr <= 0.9:
+        return 'very high negative correlation'
+
+only_significant_correlation['correlation size'] = only_significant_correlation['Pearson r'].apply(determine_correlation)
+
+
+
+
+
+data_unpack()
+data_controls()
+data_controls_neg()
+controls_neg_stat_desc()
+data_main()
+gene_assignment(main_expr)
+determining_expr_lvl()
+correlation('EGFR')
